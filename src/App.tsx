@@ -90,6 +90,109 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, [isHowItDecidesOpen, isReviewModalOpen, isDrawerOpen, isMobileMenuOpen]);
 
+  // URL state parameter support for direct linking and screenshotting
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const stateParam = params.get('state') || window.location.hash.replace('#', '');
+    if (!stateParam) return;
+
+    if (stateParam === '01_templates_rejected') {
+      setCurrentTab('templates');
+      setIsDrawerOpen(false);
+      setIsReviewModalOpen(false);
+      setTemplates(INITIAL_TEMPLATES);
+      setActiveTemplate(INITIAL_TEMPLATES[0]);
+    } else if (stateParam === '02_assistant_explains_fix') {
+      setCurrentTab('templates');
+      setActiveTemplate(INITIAL_TEMPLATES[0]);
+      setIsDrawerOpen(true);
+      setIsReviewModalOpen(false);
+      setChatMessages(initialChatMessages);
+    } else if (stateParam === '03_review_old_vs_new') {
+      setCurrentTab('templates');
+      setActiveTemplate(INITIAL_TEMPLATES[0]);
+      setIsReviewModalOpen(true);
+      setIsDrawerOpen(false);
+    } else if (stateParam === '04_handoff_summary_edge_case') {
+      setCurrentTab('templates');
+      setCurrentScenario('EDGE_CASE_A');
+      const targetTpl = {
+        ...INITIAL_TEMPLATES[0],
+        status: 'REJECTED' as const,
+        category: 'MARKETING' as const,
+        rejectionReason: undefined,
+        metaErrorCode: '132000 (No reason payload returned)',
+        isSecondRejection: true,
+      };
+      setTemplates((prev) =>
+        prev.map((t) => (t.id === 'tpl_diwali_2026' ? targetTpl : t))
+      );
+      setActiveTemplate(targetTpl);
+      const handoff: HandoffData = {
+        ticketId: 'Ticket #ESC-89211',
+        issue: 'Template rejected again without specific Meta policy reason code',
+        tried: 'Category changed from Utility ➔ Marketing, resubmitted to Meta',
+        templateName: 'diwali_offer_2026',
+        businessId: `${ACCOUNT_CONTEXT.wabaId} (${ACCOUNT_CONTEXT.businessName})`,
+        metaResponse: 'Error 132000 (Generic rejection / No detail payload)',
+        agentStatus: 'Waiting for a support specialist',
+      };
+      setChatMessages([
+        {
+          id: 'msg_edge_a_honest',
+          sender: 'assistant',
+          content:
+            "Meta rejected diwali_offer_2026 again, but this time they did not return a specific error code or policy explanation. I can't see a clear reason this time and won't guess. Let's get our senior WhatsApp team to review this directly with Meta.",
+          timestamp: 'Just now',
+          basedOn: 'Meta Graph API response (No policy violation detail returned)',
+          type: 'rejected-again',
+        },
+        {
+          id: 'msg_handoff_a_card',
+          sender: 'assistant',
+          content:
+            "I've packaged your complete case history for our senior WhatsApp team. A support specialist will reply here in this chat. You won't need to repeat anything.",
+          timestamp: 'Just now',
+          basedOn: 'Cheerio Priority Escalation Queue',
+          type: 'human-handoff',
+          handoffData: handoff,
+        },
+      ]);
+      setIsDrawerOpen(true);
+      setIsReviewModalOpen(false);
+    } else if (stateParam === '05_out_of_scope_ticket_form') {
+      setCurrentTab('templates');
+      setCurrentScenario('EDGE_CASE_B');
+      const ticketData: TicketFormData = {
+        subject: 'Pricing & Plan Discount Request — Riya Jewels',
+        summary:
+          'Customer Riya is inquiring about a custom discount or price adjustment for their current Growth Plan for Riya Jewels.',
+        department: 'Billing & Accounts Team',
+        submitted: false,
+      };
+      setChatMessages([
+        {
+          id: 'msg_user_b_scope',
+          sender: 'user',
+          content: 'Can you reduce my plan price?',
+          timestamp: 'Just now',
+        },
+        {
+          id: 'msg_bot_b_scope',
+          sender: 'assistant',
+          content:
+            'I can only help with WhatsApp setups, message templates, and campaign errors. I cannot modify subscription plans, apply billing discounts, or change pricing.',
+          timestamp: 'Just now',
+          basedOn: 'Cheerio Platform Scope & Billing Policy',
+          type: 'ticket-form',
+          ticketFormData: ticketData,
+        },
+      ]);
+      setIsDrawerOpen(true);
+      setIsReviewModalOpen(false);
+    }
+  }, []);
+
   // RESET DEMO
   const handleResetDemo = () => {
     setTemplates(INITIAL_TEMPLATES);

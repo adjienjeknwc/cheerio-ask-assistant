@@ -66,7 +66,7 @@ export const DemoControls: React.FC<DemoControlsProps> = ({
   ];
 
   return (
-    <div ref={containerRef} className="fixed bottom-4 left-4 z-40 select-none">
+    <div ref={containerRef} className="fixed bottom-4 left-4 lg:left-72 z-40 select-none">
       {/* Expanded Popover Menu */}
       {isOpen && (
         <div className="mb-2 bg-slate-900 text-white rounded-2xl shadow-2xl border border-slate-700/80 w-80 p-3 space-y-2 animate-fade-in backdrop-blur-md">

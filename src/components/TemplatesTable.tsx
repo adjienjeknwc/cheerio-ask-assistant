@@ -154,7 +154,7 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
               const rejectedTpl = templates.find((t) => t.status === 'REJECTED');
               if (rejectedTpl) onFixWithAskCheerio(rejectedTpl);
             }}
-            className="w-full sm:w-auto shrink-0 flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition-colors"
+            className="w-full sm:w-auto shrink-0 flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Fix with Ask Cheerio</span>
