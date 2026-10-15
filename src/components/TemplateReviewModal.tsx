@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ShieldCheck, AlertCircle, CheckCircle2, Send, Edit3, Sparkles } from 'lucide-react';
 import { Template } from '../types';
 import { WhatsAppPreview } from './WhatsAppPreview';
@@ -20,6 +20,19 @@ export const TemplateReviewModal: React.FC<TemplateReviewModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileTab, setMobileTab] = useState<'PROPOSED' | 'ORIGINAL'>('PROPOSED');
 
+  // Accessible keyboard support: Esc key closes modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleSubmit = () => {
@@ -32,13 +45,20 @@ export const TemplateReviewModal: React.FC<TemplateReviewModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in overflow-y-auto"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="review-modal-title"
+    >
       <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full h-[96dvh] sm:h-auto sm:max-h-[92vh] flex flex-col border border-slate-200 overflow-hidden my-auto">
         {/* Header */}
         <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm sm:text-base font-bold text-slate-900">Review & Resubmit Template</span>
+              <span id="review-modal-title" className="text-sm sm:text-base font-bold text-slate-900">
+                Review & Resubmit Template
+              </span>
               <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200 hidden xs:inline">
                 Ask Cheerio Fix
               </span>
@@ -49,7 +69,8 @@ export const TemplateReviewModal: React.FC<TemplateReviewModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors shrink-0"
+            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
+            title="Close dialog (Esc)"
           >
             <X className="w-5 h-5" />
           </button>
@@ -67,7 +88,7 @@ export const TemplateReviewModal: React.FC<TemplateReviewModalProps> = ({
         <div className="md:hidden px-4 pt-3 pb-1 bg-white border-b border-slate-100 flex items-center space-x-2 shrink-0">
           <button
             onClick={() => setMobileTab('PROPOSED')}
-            className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
+            className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-xl transition-all flex items-center justify-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
               mobileTab === 'PROPOSED'
                 ? 'bg-emerald-600 text-white shadow-2xs'
                 : 'bg-slate-100 text-slate-600'
@@ -78,7 +99,7 @@ export const TemplateReviewModal: React.FC<TemplateReviewModalProps> = ({
           </button>
           <button
             onClick={() => setMobileTab('ORIGINAL')}
-            className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
+            className={`flex-1 py-1.5 px-3 text-xs font-semibold rounded-xl transition-all flex items-center justify-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
               mobileTab === 'ORIGINAL'
                 ? 'bg-rose-600 text-white shadow-2xs'
                 : 'bg-slate-100 text-slate-600'
@@ -90,7 +111,6 @@ export const TemplateReviewModal: React.FC<TemplateReviewModalProps> = ({
 
         {/* Modal Body */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-          {/* Side-by-side on desktop, conditionally rendered on mobile */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Left Column: Old / Rejected Template */}
             <div
@@ -193,7 +213,7 @@ export const TemplateReviewModal: React.FC<TemplateReviewModalProps> = ({
                   value={templateText}
                   onChange={(e) => setTemplateText(e.target.value)}
                   rows={3}
-                  className="w-full p-2.5 sm:p-3 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all text-slate-800 leading-relaxed font-sans"
+                  className="w-full p-2.5 sm:p-3 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all text-slate-800 leading-relaxed font-sans focus-visible:ring-2 focus-visible:ring-emerald-500"
                   placeholder="Enter template message text..."
                 />
                 <p className="text-[10px] text-slate-500 mt-1">
@@ -230,14 +250,14 @@ export const TemplateReviewModal: React.FC<TemplateReviewModalProps> = ({
             <button
               onClick={onClose}
               disabled={isSubmitting}
-              className="flex-1 sm:flex-none px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-200 transition-colors text-center"
+              className="flex-1 sm:flex-none px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-200 transition-colors text-center focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-5 py-2 sm:py-2.5 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:scale-98 shadow-sm transition-all disabled:opacity-50"
+              className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-5 py-2 sm:py-2.5 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:scale-98 shadow-sm transition-all disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{isSubmitting ? 'Resubmitting...' : 'Resubmit to Meta'}</span>

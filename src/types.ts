@@ -16,6 +16,26 @@ export interface Template {
   sampleVariables?: Record<string, string>;
   header?: string;
   buttons?: Array<{ type: string; text: string }>;
+  isSecondRejection?: boolean;
+}
+
+export interface HandoffData {
+  ticketId: string;
+  issue: string;
+  tried: string;
+  templateName?: string;
+  businessId: string;
+  metaResponse: string;
+  agentStatus: string;
+  submittedAt?: string;
+}
+
+export interface TicketFormData {
+  subject: string;
+  summary: string;
+  department: string;
+  submitted: boolean;
+  ticketNumber?: string;
 }
 
 export interface ChatMessage {
@@ -24,13 +44,22 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
   basedOn?: string;
-  type?: 'text' | 'fix-proposal' | 'review-complete' | 'human-handoff';
+  type?:
+    | 'text'
+    | 'fix-proposal'
+    | 'review-complete'
+    | 'human-handoff'
+    | 'rejected-again'
+    | 'ticket-form'
+    | 'verification-handoff';
   fixData?: {
     templateId: string;
     currentCategory: TemplateCategory;
     proposedCategory: TemplateCategory;
     summary: string;
   };
+  handoffData?: HandoffData;
+  ticketFormData?: TicketFormData;
   feedbackGiven?: 'up' | 'down' | null;
 }
 
@@ -40,3 +69,5 @@ export interface ToastNotification {
   message: string;
   type: 'success' | 'info' | 'warning' | 'error';
 }
+
+export type DemoScenario = 'MAIN_REJECTION' | 'EDGE_CASE_A' | 'EDGE_CASE_B' | 'EDGE_CASE_C';
