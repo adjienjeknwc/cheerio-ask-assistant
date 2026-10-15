@@ -12,13 +12,7 @@ import {
   RotateCcw,
   CheckCircle2,
   Clock,
-  Layers,
-  ArrowRight,
   TrendingUp,
-  MessageSquare,
-  Users,
-  ShieldCheck,
-  Calendar,
   AlertCircle
 } from 'lucide-react';
 
@@ -28,6 +22,7 @@ export const App: React.FC = () => {
   const [activeTemplate, setActiveTemplate] = useState<Template | null>(INITIAL_TEMPLATES[0]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
 
@@ -135,7 +130,6 @@ export const App: React.FC = () => {
     );
 
     // 2. Show toast: "Submitted. We'll notify you when Meta responds."
-    // Strictly adheres to rule: Do NOT show any promised approval time.
     addToast(
       'Template Submitted',
       "Submitted. We'll notify you when Meta responds."
@@ -231,49 +225,52 @@ export const App: React.FC = () => {
   const rejectedCount = templates.filter((t) => t.status === 'REJECTED').length;
 
   return (
-    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden text-slate-800">
-      {/* Left Sidebar */}
+    <div className="flex h-[100dvh] bg-[#F8FAFC] overflow-hidden text-slate-800">
+      {/* Left Sidebar (Desktop + Mobile off-canvas) */}
       <Sidebar
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
-        openAskCheerio={() => {
-          setIsDrawerOpen(true);
-        }}
+        openAskCheerio={() => setIsDrawerOpen(true)}
         rejectedCount={rejectedCount}
+        isMobileOpen={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Case Study Guided Scenario Banner */}
-        <div className="bg-slate-900 text-white px-6 py-2 flex items-center justify-between text-xs border-b border-slate-800 shrink-0">
-          <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span className="font-semibold text-slate-200">Prototype Walkthrough:</span>
-            <span className="text-slate-300 hidden md:inline">
-              Riya's Diwali template was rejected. Experience how <em>Ask Cheerio</em> diagnoses & proposes a one-click fix.
+        {/* Case Study Guided Scenario Banner (Responsive) */}
+        <div className="bg-slate-900 text-white px-3 sm:px-6 py-2 flex items-center justify-between text-xs border-b border-slate-800 shrink-0 gap-2">
+          <div className="flex items-center space-x-2 min-w-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+            <span className="font-semibold text-slate-200 shrink-0 text-[11px] sm:text-xs">
+              Walkthrough:
+            </span>
+            <span className="text-slate-300 truncate text-[11px] sm:text-xs">
+              Fix Diwali template rejection with <em>Ask Cheerio</em>
             </span>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <span className="text-[11px] text-slate-400 font-mono hidden sm:inline">
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+            <span className="text-[10px] sm:text-[11px] text-slate-400 font-mono hidden md:inline">
               Step: {isDiwaliSubmitted ? '4 of 4 (Submitted)' : isDrawerOpen ? '2 of 4 (Drawer Open)' : '1 of 4 (Start)'}
             </span>
             <button
               onClick={handleResetScenario}
-              className="flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors border border-slate-700"
+              className="flex items-center space-x-1 sm:space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-medium transition-colors border border-slate-700 shrink-0"
               title="Reset prototype state to initial rejected template"
             >
               <RotateCcw className="w-3 h-3" />
-              <span>Reset Scenario</span>
+              <span>Reset</span>
             </button>
           </div>
         </div>
 
-        {/* Top Bar */}
+        {/* Top Bar with hamburger trigger on mobile */}
         <TopBar
           onToggleAskCheerio={handleToggleDrawer}
           isAskCheerioOpen={isDrawerOpen}
           hasRejection={rejectedCount > 0}
+          onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
         />
 
         {/* View Tabs router */}
@@ -290,15 +287,15 @@ export const App: React.FC = () => {
           )}
 
           {currentTab === 'dashboard' && (
-            <div className="p-8 max-w-6xl mx-auto space-y-6">
-              <div className="flex items-center justify-between">
+            <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                  <h1 className="text-xl font-bold text-slate-900">Riya Jewels Dashboard</h1>
+                  <h1 className="text-lg sm:text-xl font-bold text-slate-900">Riya Jewels Dashboard</h1>
                   <p className="text-xs text-slate-500 mt-0.5">Overview of WhatsApp audience reach and active campaigns.</p>
                 </div>
                 <button
                   onClick={() => setCurrentTab('templates')}
-                  className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs"
+                  className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs self-start sm:self-auto"
                 >
                   View All Templates &rarr;
                 </button>
@@ -306,9 +303,9 @@ export const App: React.FC = () => {
 
               {/* Alert card on dashboard */}
               {rejectedCount > 0 ? (
-                <div className="p-5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between">
+                <div className="p-4 sm:p-5 bg-rose-50 border border-rose-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-start space-x-3">
-                    <div className="p-2 bg-rose-100 text-rose-700 rounded-xl mt-0.5">
+                    <div className="p-2 bg-rose-100 text-rose-700 rounded-xl mt-0.5 shrink-0">
                       <AlertCircle className="w-5 h-5" />
                     </div>
                     <div>
@@ -323,7 +320,7 @@ export const App: React.FC = () => {
                       const rejectedTpl = templates.find((t) => t.status === 'REJECTED');
                       if (rejectedTpl) handleFixWithAskCheerio(rejectedTpl);
                     }}
-                    className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl shadow-xs shrink-0 flex items-center space-x-1.5"
+                    className="w-full sm:w-auto px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl shadow-xs shrink-0 flex items-center justify-center space-x-1.5"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>Fix with Ask Cheerio</span>
@@ -338,28 +335,28 @@ export const App: React.FC = () => {
                 </div>
               )}
 
-              {/* Quick metrics grid */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {/* Quick metrics grid (Responsive columns) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs">
                   <p className="text-xs text-slate-500 font-medium">WhatsApp Delivery Rate</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">98.4%</p>
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">98.4%</p>
                   <span className="text-[11px] text-emerald-600 font-medium flex items-center mt-1">
-                    <TrendingUp className="w-3 h-3 mr-1" /> High Meta Quality Tier
+                    <TrendingUp className="w-3 h-3 mr-1" /> High Meta Quality
                   </span>
                 </div>
                 <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs">
                   <p className="text-xs text-slate-500 font-medium">Messages Sent This Month</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">14,290</p>
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">14,290</p>
                   <span className="text-[11px] text-slate-500 mt-1 block">Jaipur & Delhi shoppers</span>
                 </div>
                 <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs">
                   <p className="text-xs text-slate-500 font-medium">Wallet Balance</p>
-                  <p className="text-2xl font-bold text-slate-900 font-mono mt-1">{ACCOUNT_CONTEXT.walletBalance}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900 font-mono mt-1">{ACCOUNT_CONTEXT.walletBalance}</p>
                   <span className="text-[11px] text-emerald-600 font-medium mt-1 block">Auto-recharge active</span>
                 </div>
                 <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs">
                   <p className="text-xs text-slate-500 font-medium">Active Templates</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                     {templates.filter((t) => t.status === 'APPROVED').length} Approved
                   </p>
                   <span className="text-[11px] text-slate-500 mt-1 block">
@@ -371,19 +368,19 @@ export const App: React.FC = () => {
           )}
 
           {currentTab === 'campaigns' && (
-            <div className="p-8 max-w-6xl mx-auto space-y-6">
+            <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-5">
               <div>
-                <h1 className="text-xl font-bold text-slate-900">Campaigns</h1>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-900">Campaigns</h1>
                 <p className="text-xs text-slate-500 mt-0.5">Scheduled and broadcast WhatsApp campaigns for Riya Jewels.</p>
               </div>
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-                <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-100 gap-2">
                   <div>
                     <h3 className="text-sm font-semibold text-slate-900">Diwali Festive Mega Sale (Draft)</h3>
                     <p className="text-xs text-slate-500 mt-0.5">Audience: All Jaipur & Rajasthan Customers (3,400 contacts)</p>
                   </div>
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                    {isDiwaliSubmitted ? 'Ready (Awaiting Template Approval)' : 'Blocked: Template Rejected'}
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 self-start sm:self-auto">
+                    {isDiwaliSubmitted ? 'Ready (Awaiting Approval)' : 'Blocked: Template Rejected'}
                   </span>
                 </div>
                 <p className="text-xs text-slate-600">
@@ -391,7 +388,7 @@ export const App: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setCurrentTab('templates')}
-                  className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 underline"
+                  className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 underline inline-block"
                 >
                   Manage template in Templates tab &rarr;
                 </button>
@@ -400,18 +397,18 @@ export const App: React.FC = () => {
           )}
 
           {currentTab === 'wallet' && (
-            <div className="p-8 max-w-6xl mx-auto space-y-6">
+            <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-5">
               <div>
-                <h1 className="text-xl font-bold text-slate-900">Wallet & Meta Conversation Billing</h1>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-900">Wallet & Meta Conversation Billing</h1>
                 <p className="text-xs text-slate-500 mt-0.5">Prepaid balance for WhatsApp Marketing and Utility messages.</p>
               </div>
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 max-w-md space-y-3">
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 max-w-md space-y-3">
                 <p className="text-xs text-slate-500">Current Available Balance</p>
-                <p className="text-3xl font-bold text-slate-900 font-mono">{ACCOUNT_CONTEXT.walletBalance}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900 font-mono">{ACCOUNT_CONTEXT.walletBalance}</p>
                 <p className="text-xs text-slate-600">
                   Marketing conversation rate: ~₹0.78 / conversation (Meta India rate card)
                 </p>
-                <button className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold mt-2">
+                <button className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold mt-2">
                   + Add ₹1,000 via UPI / Card
                 </button>
               </div>
@@ -419,9 +416,9 @@ export const App: React.FC = () => {
           )}
 
           {['chatbots', 'contacts', 'integrations', 'settings'].includes(currentTab) && (
-            <div className="p-8 max-w-6xl mx-auto space-y-4">
-              <h1 className="text-xl font-bold text-slate-900 capitalize">{currentTab}</h1>
-              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500 text-xs">
+            <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-4">
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900 capitalize">{currentTab}</h1>
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 text-center text-slate-500 text-xs">
                 <p>
                   You are viewing the {currentTab} section for <strong>Riya Jewels</strong>.
                 </p>

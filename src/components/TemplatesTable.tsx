@@ -7,10 +7,8 @@ import {
   AlertCircle,
   CheckCircle2,
   Clock,
-  Filter,
   Eye,
   MoreVertical,
-  ChevronRight,
   Info
 } from 'lucide-react';
 import { Template, TemplateStatus } from '../types';
@@ -102,32 +100,32 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-5">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center space-x-2">
+          <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center space-x-2">
             <span>WhatsApp Message Templates</span>
-            <span className="text-xs font-normal text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
+            <span className="text-[10px] sm:text-xs font-normal text-slate-500 bg-slate-100 px-2 sm:px-2.5 py-0.5 rounded-full hidden xs:inline">
               Meta Sync Active
             </span>
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Create, manage, and inspect WhatsApp pre-approved templates for your campaigns and automated replies.
+            Create, manage, and inspect WhatsApp pre-approved templates for campaigns and automated flows.
           </p>
         </div>
 
-        <div className="flex items-center space-x-2.5">
+        <div className="flex items-center space-x-2 shrink-0">
           <button
             type="button"
             className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-colors shadow-2xs"
           >
             <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
-            <span>Sync with Meta</span>
+            <span className="hidden sm:inline">Sync with Meta</span>
           </button>
           <button
             type="button"
-            className="flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-xs"
+            className="flex items-center space-x-1.5 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-xs"
           >
             <Plus className="w-4 h-4" />
             <span>New Template</span>
@@ -137,16 +135,16 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
 
       {/* Rejection Notice Banner if any rejected template exists */}
       {counts.rejected > 0 && (
-        <div className="p-4 bg-rose-50/80 border border-rose-200 rounded-2xl flex items-center justify-between gap-4">
-          <div className="flex items-center space-x-3 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+        <div className="p-4 bg-rose-50/80 border border-rose-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-start sm:items-center space-x-3 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
               <AlertCircle className="w-5 h-5" />
             </div>
             <div className="min-w-0">
               <p className="text-xs font-semibold text-rose-900">
                 1 template rejected by Meta — Action needed before launching your campaign
               </p>
-              <p className="text-[11px] text-rose-700 mt-0.5 truncate">
+              <p className="text-[11px] text-rose-700 mt-0.5">
                 Meta flagged category mismatch on <span className="font-mono font-medium">diwali_offer_2026</span>. Ask Cheerio can diagnose and propose the fix.
               </p>
             </div>
@@ -156,7 +154,7 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
               const rejectedTpl = templates.find((t) => t.status === 'REJECTED');
               if (rejectedTpl) onFixWithAskCheerio(rejectedTpl);
             }}
-            className="shrink-0 flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition-colors"
+            className="w-full sm:w-auto shrink-0 flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Fix with Ask Cheerio</span>
@@ -166,12 +164,12 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
 
       {/* Filters and search bar */}
       <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          {/* Status Tabs */}
-          <div className="flex items-center space-x-1 overflow-x-auto pb-1 md:pb-0">
+        <div className="p-3 sm:p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          {/* Status Tabs (Horizontal scrolling on small screens) */}
+          <div className="flex items-center space-x-1 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
             <button
               onClick={() => setSelectedFilter('ALL')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shrink-0 ${
                 selectedFilter === 'ALL'
                   ? 'bg-slate-900 text-white shadow-2xs'
                   : 'text-slate-600 hover:bg-slate-100'
@@ -181,7 +179,7 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
             </button>
             <button
               onClick={() => setSelectedFilter('APPROVED')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center space-x-1.5 shrink-0 ${
                 selectedFilter === 'APPROVED'
                   ? 'bg-emerald-700 text-white shadow-2xs'
                   : 'text-slate-600 hover:bg-slate-100'
@@ -192,7 +190,7 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
             </button>
             <button
               onClick={() => setSelectedFilter('REJECTED')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center space-x-1.5 shrink-0 ${
                 selectedFilter === 'REJECTED'
                   ? 'bg-rose-600 text-white shadow-2xs'
                   : 'text-slate-600 hover:bg-slate-100'
@@ -207,7 +205,7 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
             </button>
             <button
               onClick={() => setSelectedFilter('SUBMITTED')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center space-x-1.5 shrink-0 ${
                 selectedFilter === 'SUBMITTED'
                   ? 'bg-amber-600 text-white shadow-2xs'
                   : 'text-slate-600 hover:bg-slate-100'
@@ -218,7 +216,7 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
             </button>
             <button
               onClick={() => setSelectedFilter('PENDING')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center space-x-1.5 shrink-0 ${
                 selectedFilter === 'PENDING'
                   ? 'bg-slate-700 text-white shadow-2xs'
                   : 'text-slate-600 hover:bg-slate-100'
@@ -234,7 +232,7 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Search template name or text..."
+              placeholder="Search templates..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all placeholder:text-slate-400"
@@ -242,9 +240,80 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        {/* Mobile / Tablet Cards View (Visible on < md) */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {filteredTemplates.map((template) => {
+            const isRejected = template.status === 'REJECTED';
+            const isSubmitted = template.status === 'SUBMITTED';
+
+            return (
+              <div
+                key={template.id}
+                className={`p-4 space-y-2.5 transition-colors ${
+                  isRejected ? 'bg-rose-50/25' : 'hover:bg-slate-50/70'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-semibold text-slate-900 font-mono text-xs truncate">
+                    {template.name}
+                  </span>
+                  <div>{getStatusBadge(template.status)}</div>
+                </div>
+
+                <div className="flex items-center space-x-2 text-[11px] text-slate-500">
+                  {getCategoryBadge(template.category)}
+                  <span>•</span>
+                  <span>{template.language}</span>
+                  <span>•</span>
+                  <span>{template.updatedAt}</span>
+                </div>
+
+                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
+                  {template.text}
+                </p>
+
+                {isRejected && template.rejectionReason && (
+                  <div className="text-[11px] text-rose-700 bg-rose-50 rounded-xl p-2 border border-rose-200/80 flex items-start space-x-1.5">
+                    <Info className="w-3.5 h-3.5 text-rose-500 shrink-0 mt-0.5" />
+                    <span>Meta: {template.rejectionReason}</span>
+                  </div>
+                )}
+
+                <div className="pt-1 flex items-center justify-end space-x-2">
+                  {isRejected ? (
+                    <button
+                      onClick={() => onFixWithAskCheerio(template)}
+                      className="w-full flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl font-semibold text-xs text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Fix with Ask Cheerio</span>
+                    </button>
+                  ) : isSubmitted ? (
+                    <button
+                      onClick={() => onFixWithAskCheerio(template)}
+                      className="w-full flex items-center justify-center space-x-1 px-3 py-2 rounded-xl text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200"
+                    >
+                      <Clock className="w-3.5 h-3.5 text-amber-600" />
+                      <span>View in Ask Cheerio</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => onPreviewTemplate(template)}
+                      className="text-xs text-emerald-700 font-medium py-1 px-2.5 rounded-lg hover:bg-emerald-50 flex items-center space-x-1"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Preview Message</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop Table View (Visible on >= md) */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left text-xs min-w-[700px]">
             <thead className="bg-slate-50/70 border-b border-slate-200/80 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="py-3 px-5">Template Name & Message Snippet</th>
@@ -366,15 +435,15 @@ export const TemplatesTable: React.FC<TemplatesTableProps> = ({
         </div>
 
         {/* Table footer info */}
-        <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+        <div className="p-3 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[11px] text-slate-500">
           <span>Showing {filteredTemplates.length} of {templates.length} templates</span>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3 text-[10px] sm:text-[11px]">
             <span className="flex items-center space-x-1 text-slate-400">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
               <span>Meta Graph API v20.0</span>
             </span>
             <span className="text-slate-300">|</span>
-            <span className="text-slate-500">All submissions adhere to WhatsApp Commerce Policy</span>
+            <span className="text-slate-500">WhatsApp Commerce Policy</span>
           </div>
         </div>
       </div>

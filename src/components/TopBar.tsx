@@ -1,58 +1,75 @@
 import React from 'react';
-import { Sparkles, Wallet, Bell, HelpCircle, Search, ExternalLink } from 'lucide-react';
+import { Sparkles, Wallet, Bell, HelpCircle, Menu } from 'lucide-react';
 import { ACCOUNT_CONTEXT } from '../data/mockData';
 
 interface TopBarProps {
   onToggleAskCheerio: () => void;
   isAskCheerioOpen: boolean;
   hasRejection: boolean;
+  onOpenMobileMenu?: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
   onToggleAskCheerio,
   isAskCheerioOpen,
-  hasRejection
+  hasRejection,
+  onOpenMobileMenu
 }) => {
   return (
-    <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20">
-      {/* Left: Breadcrumbs / Title */}
-      <div className="flex items-center space-x-3">
-        <div className="flex items-center space-x-2 text-xs text-slate-500 font-medium">
-          <span>Marketing</span>
-          <span>/</span>
-          <span className="text-slate-900 font-semibold">Message Templates</span>
+    <header className="h-16 bg-white border-b border-slate-200 px-3 sm:px-6 flex items-center justify-between sticky top-0 z-20">
+      {/* Left: Mobile Menu Button + Breadcrumbs */}
+      <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+        {onOpenMobileMenu && (
+          <button
+            onClick={onOpenMobileMenu}
+            className="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
+            title="Open navigation menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
+
+        <div className="flex items-center space-x-1.5 sm:space-x-2 text-xs font-medium min-w-0">
+          <span className="text-slate-400 hidden md:inline">Marketing</span>
+          <span className="text-slate-300 hidden md:inline">/</span>
+          <span className="text-slate-900 font-semibold truncate text-xs sm:text-sm">
+            Templates
+          </span>
         </div>
-        <span className="text-xs text-slate-300">|</span>
-        <span className="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">
-          Official Meta Cloud API
+
+        <span className="text-xs text-slate-300 hidden sm:inline">|</span>
+        <span className="text-[10px] sm:text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium hidden sm:inline truncate">
+          Meta Cloud API
         </span>
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
         {/* Wallet Balance Chip */}
-        <div className="flex items-center space-x-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl hover:bg-slate-100/70 transition-colors">
-          <div className="w-5 h-5 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 bg-slate-50 border border-slate-200 px-2 sm:px-3 py-1.5 rounded-xl hover:bg-slate-100/70 transition-colors">
+          <div className="w-5 h-5 rounded-md bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
             <Wallet className="w-3 h-3" />
           </div>
           <div className="text-left">
-            <p className="text-[10px] text-slate-400 font-medium leading-none">Wallet Balance</p>
-            <p className="text-xs font-semibold text-slate-800 font-mono leading-tight">
+            <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium leading-none hidden xs:block">
+              Wallet
+            </p>
+            <p className="text-[11px] sm:text-xs font-semibold text-slate-800 font-mono leading-tight">
               {ACCOUNT_CONTEXT.walletBalance}
             </p>
           </div>
           <button
             type="button"
-            className="text-[10px] font-semibold text-emerald-700 hover:text-emerald-800 bg-white px-1.5 py-0.5 rounded border border-emerald-200 shadow-2xs ml-1"
+            className="text-[10px] font-semibold text-emerald-700 hover:text-emerald-800 bg-white px-1.5 py-0.5 rounded border border-emerald-200 shadow-2xs hidden md:inline-block ml-1"
           >
             + Add
           </button>
         </div>
 
-        {/* Support & Docs Icon */}
+        {/* Support & Docs Icon (hidden on smallest screens to save room) */}
         <button
           type="button"
-          className="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-50 transition-colors relative"
+          className="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-50 transition-colors hidden sm:block"
           title="Cheerio Help Documentation"
         >
           <HelpCircle className="w-4 h-4" />
@@ -73,7 +90,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* Persistent Ask Cheerio Button */}
         <button
           onClick={onToggleAskCheerio}
-          className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl font-medium text-xs transition-all shadow-xs ${
+          className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3.5 py-1.5 rounded-xl font-semibold text-xs transition-all shadow-xs shrink-0 ${
             isAskCheerioOpen
               ? 'bg-emerald-700 text-white shadow-emerald-700/20'
               : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200'
@@ -85,10 +102,10 @@ export const TopBar: React.FC<TopBarProps> = ({
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
             )}
           </div>
-          <span>Ask Cheerio</span>
+          <span className="inline">Ask Cheerio</span>
           {hasRejection && (
-            <span className="text-[10px] bg-rose-500 text-white font-bold px-1.5 py-0.2 rounded-full">
-              1 issue
+            <span className="text-[10px] bg-rose-500 text-white font-bold px-1.5 py-0.2 rounded-full hidden sm:inline">
+              1
             </span>
           )}
         </button>
